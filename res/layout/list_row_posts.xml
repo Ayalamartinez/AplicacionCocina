@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    android:alpha="0.65"
+    android:padding="2dp" >
+
+    <CheckBox
+        android:id="@+id/leido"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:focusable="false" />
+            
+    <TextView
+        android:id="@+id/tvTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/leido"
+        android:text="Titulo del post"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/tvFecha_publicacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tvTitulo"
+        android:paddingTop="10dp"
+        android:text="25/05/2012"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ImageView
+        android:id="@+id/ivCalendar"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_alignTop="@+id/tvFecha_publicacion"
+        android:layout_marginTop="10dp"
+        android:layout_toLeftOf="@+id/tvFecha_publicacion"
+        android:contentDescription="@string/imagen_content_description"
+        android:src="@drawable/calendar" />
+
+</RelativeLayout>
+
+

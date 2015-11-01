@@ -1,0 +1,21 @@
+<resources>
+
+    <string name="app_name">CocinaTESSIES</string>
+    <string name="logo_description">Logo</string>
+    <string name="menu_cancel_post">Anular post //?</string>
+    <string name="button_mark_read">Marcar como listo</string>
+    <string name="menu_select_all">Seleccionar todos</string>
+    <string name="menu_unselect_all">Deseleccionar todos</string>
+    <string name="title_activity_post_list">Entradas</string>
+    <string name="title_activity_login">Identifíquese</string>
+    <string name="dialog_confirm_cancel_post">¿Deseas marcar esta orden como lista?</string>
+    <string name="dialog_confirm_cancel_post_yes">Sí</string>
+    <string name="dialog_confirm_cancel_post_no">No</string>
+    <string name="login_nsocio">Nº Socio:</string>
+    <string name="login_pin">Pin:</string>
+    <string name="login_button">Confirmar</string>
+    <string name="no_post_selected">No ha seleccionado ninguna orden</string>
+    <string name="n_socio_hint">Número de socio</string>
+    <string name="imagen_content_description">Calendario</string>
+
+</resources>

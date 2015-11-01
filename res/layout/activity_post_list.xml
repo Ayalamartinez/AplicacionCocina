@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/cocina" >
+
+    <include
+        android:id="@+id/include1"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="15dp"
+        layout="@layout/layout_logo" />
+
+    <Button
+        android:id="@+id/btAnular"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/include1"
+        android:layout_alignParentRight="true"
+        android:text="@string/button_mark_read" />
+    
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/btAnular"
+        tools:listitem="@android:layout/simple_list_item_checked" >
+    </ListView>
+
+    
+
+</RelativeLayout> <!-- android:id="@+id/listViewMatch" -->
+
