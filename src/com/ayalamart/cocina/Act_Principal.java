@@ -13,9 +13,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.ayalamart.adapter.PostAdapter;
 import com.ayalamart.adapter.PostData;
+
 import com.ayalamart.util.AppController;
 
 
@@ -48,8 +50,9 @@ public class Act_Principal extends ListActivity {
 	String idpedido = null; 
 	String plato_ped= null; 
 	String idplato_ped = null; 
-	private String url_pedidos = "//http://10.10.0.99:8080/Restaurante/rest/pedido/getPedidosAll"; 
-	private String url_borrarpedido = "//http://10.10.0.99:8080/Restaurante/rest/pedido/deletePedido/"; 
+	String url_pedidos = "http://10.10.0.99:8080/Restaurante/rest/pedido/getPedidosAll"; 
+	private String url_borrarpedido = "http://10.10.0.99:8080/Restaurante/rest/pedido/deletePedido/"; 
+	
 
 	@Override
 	public void onCreate( Bundle savedInstanceState) {
@@ -79,67 +82,68 @@ public class Act_Principal extends ListActivity {
 		SimpleDateFormat fechaact = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
 		String fecha = fechaact.format(rightnow.getTime());
 		data = new ArrayList<PostData>();
-		if (savedInstanceState == null){
+
+		
+		//JsonArrayRequest pedidosReq = new JsonArrayRequest(url_pedidos, new Response.Listener<JSONArray>(){
+			JsonObjectRequest pedidosReq = new JsonObjectRequest(Method.GET, 
+					url_pedidos, null, new Response.Listener<JSONObject>() {
+			private ArrayList<String> datopedido;
 			
-			JsonArrayRequest pedidosReq = new JsonArrayRequest(url_pedidos, new Response.Listener<JSONArray>(){
-
-				private ArrayList<String> datopedido;
-
-				@Override
-				public void onResponse(JSONArray response) {
-					datopedido = null; 
-
-					// TODO Auto-generated method stub
-					Log.d(TAG, response.toString()); 
-					try {
-						//PC
-						for (int i = 0; i < response.length(); i++) { 
-
-							final JSONArray objetosDetalle = response.getJSONArray(i); 
-
-
-							//objDetalle
-							final JSONArray objDETALLE = objetosDetalle.getJSONArray(1); 
-
-							for (int k = 0; k < objDETALLE.length(); k++) {
-								String cantidad_platos = objDETALLE.getJSONObject(k).getString("cant");
-								if (objDETALLE.getJSONObject(k).getString("pedido")!=null) {
-									JSONObject objpedido = new JSONObject(objDETALLE.getJSONObject(k).getString("pedido")); 
-									fecha_ped = objpedido.getString("fechapedido"); 
-									idpedido =objpedido.getString("idPedido"); 
-								}
-								if (objDETALLE.getJSONObject(k).getString("plato")!= null) {
-									JSONObject objPlato = new JSONObject(objDETALLE.getJSONObject(k).getString("plato")); 
-									plato_ped = objPlato.getString("nomplato");
-									idplato_ped = objPlato.getString("idplato"); 
-								}	
-
-								datopedido.add(plato_ped + " , "); 
+			@Override
+			public void onResponse(JSONObject response) {
+				datopedido = null; 
+				// TODO Auto-generated method stub
+				Log.d(TAG, response.toString()); 
+				
+				try {
+					JSONArray r2 = response.toJSONArray(null); 
+					//PC
+					for (int i = 0; i < response.length(); i++) { 
+						final JSONArray objetosDetalle = r2.getJSONArray(i); 
+						Log.d(TAG, objetosDetalle.toString()); 
+						//objDetalle
+						final JSONArray objDETALLE = objetosDetalle.getJSONArray(1); 
+						for (int k = 0; k < objDETALLE.length(); k++) {
+							String cantidad_platos = objDETALLE.getJSONObject(k).getString("cant");
+							Log.d(TAG, cantidad_platos.toString()); 
+							if (objDETALLE.getJSONObject(k).getString("pedido")!=null) {
+								Log.d(TAG, objDETALLE.getJSONObject(k).getString("pedido")); 
+								JSONObject objpedido = new JSONObject(objDETALLE.getJSONObject(k).getString("pedido")); 
+								fecha_ped = objpedido.getString("fechapedido"); 
+								idpedido =objpedido.getString("idPedido"); 
 							}
-							String pedidocompleto = datopedido.toString(); 
-
-							data.add(new PostData(fecha_ped, pedidocompleto , false));
-
-
-						}} catch (JSONException e) {
-							e.printStackTrace();
+							if (objDETALLE.getJSONObject(k).getString("plato")!= null) {
+								Log.d(TAG, objDETALLE.getJSONObject(k).getString("plato")); 
+								JSONObject objPlato = new JSONObject(objDETALLE.getJSONObject(k).getString("plato")); 
+								plato_ped = objPlato.getString("nomplato");
+								idplato_ped = objPlato.getString("idplato"); 
+							}	
+							datopedido.add(plato_ped + " , "); 
 						}
+						String pedidocompleto = datopedido.toString(); 
+						data.add(new PostData(fecha_ped, pedidocompleto , false));
+					}} catch (JSONException e) {
+						e.printStackTrace();
+					}
 
 
-				}
+			}
 
-			}, new Response.ErrorListener() {
-				@Override
-				public void onErrorResponse(VolleyError error){
-					VolleyLog.d(TAG, "Error:" + error.getMessage());
-					hidepDialog(); 
-				}
-			});
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error){
+				VolleyLog.d(TAG, "Error:" + error.getMessage());
+				hidepDialog(); 
+			}
+		});
+		AppController.getInstance().addToRequestQueue(pedidosReq);
+		if (savedInstanceState == null){
 			adapter = new PostAdapter(Act_Principal.this, data);
-			AppController.getInstance().addToRequestQueue(pedidosReq);
+			hidepDialog();
 		} else{
 			data = savedInstanceState.getParcelableArrayList("savedData");
 			adapter = new PostAdapter(Act_Principal.this, data);
+			hidepDialog();
 		}
 		setListAdapter(adapter);
 
