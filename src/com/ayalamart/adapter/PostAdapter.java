@@ -53,6 +53,7 @@ public class PostAdapter extends BaseAdapter
 		Log.v(TAG, "in getItem() for position " + position);
 		return data.get(position);
 	}
+	
 
 	@Override
 	public long getItemId(int position)
@@ -160,6 +161,7 @@ public class PostAdapter extends BaseAdapter
 				return true;
 		return false;
 	}
+	
 
 	private OnClickListener checkListener = new OnClickListener()
 	{

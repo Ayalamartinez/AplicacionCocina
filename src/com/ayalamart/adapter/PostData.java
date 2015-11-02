@@ -8,20 +8,30 @@ public class PostData implements Parcelable {
 	private String fecha_publicacion;
 	private String titulo;
 	private boolean leido;
+	private String idpedido; 
 
-	public PostData(String fecha, String equip, boolean checked) {
+	public PostData(String fecha, String equip, String idPedido, boolean checked) {
 		this.fecha_publicacion = fecha;
 		this.titulo = equip;
 		this.leido = checked;
+		this.idpedido = idPedido; 
 
 	}
 	
 	public PostData(Parcel in){
 		this.titulo= in.readString();
+		this.idpedido= in.readString();
 		this.fecha_publicacion = in.readString();
 		this.leido = in.readInt() == 1 ? true:false;
 	}
 
+	public void setidPedido(String idpedid) {
+		this.idpedido = idpedid;
+	}
+
+	public String getidPedido() {
+		return idpedido;
+	}
 	public void setFecha(String fecha) {
 		this.fecha_publicacion = fecha;
 	}
@@ -53,6 +63,7 @@ public class PostData implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(getidPedido());
 		dest.writeString(getEquipos());
 		dest.writeString(getFecha());
 		dest.writeInt(getChecked() ? 1 : 0);
