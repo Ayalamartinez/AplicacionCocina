@@ -55,7 +55,7 @@ public class Act_Principal extends ListActivity {
 	
 
 	@Override
-	public void onCreate( Bundle savedInstanceState) {
+	public void onCreate( final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_post_list);
@@ -84,50 +84,54 @@ public class Act_Principal extends ListActivity {
 		data = new ArrayList<PostData>();
 
 		
-		//JsonArrayRequest pedidosReq = new JsonArrayRequest(url_pedidos, new Response.Listener<JSONArray>(){
-			JsonObjectRequest pedidosReq = new JsonObjectRequest(Method.GET, 
-					url_pedidos, null, new Response.Listener<JSONObject>() {
-			private ArrayList<String> datopedido;
+		JsonArrayRequest pedidosReq = new JsonArrayRequest(url_pedidos, new Response.Listener<JSONArray>(){
+		//	JsonObjectRequest pedidosReq = new JsonObjectRequest(Method.GET, 
+			//		url_pedidos, null, new Response.Listener<JSONObject>() {
+			private ArrayList<String> datopedido = new ArrayList<String>();
 			
 			@Override
-			public void onResponse(JSONObject response) {
-				datopedido = null; 
+			public void onResponse(JSONArray response) {
+				
 				// TODO Auto-generated method stub
 				Log.d(TAG, response.toString()); 
-				
+				String interm = response.toString(); 
 				try {
-					JSONArray r2 = response.toJSONArray(null); 
+					// JSONObject obj_interm = new JSONObject(interm); 
+					 Log.d(TAG + "chequeo", interm); 
 					//PC
+					 
 					for (int i = 0; i < response.length(); i++) { 
-						final JSONArray objetosDetalle = r2.getJSONArray(i); 
-						Log.d(TAG, objetosDetalle.toString()); 
+						
+						final JSONObject objetosDetalle = (JSONObject)response.get(i); 
+						
 						//objDetalle
-						final JSONArray objDETALLE = objetosDetalle.getJSONArray(1); 
-						for (int k = 0; k < objDETALLE.length(); k++) {
-							String cantidad_platos = objDETALLE.getJSONObject(k).getString("cant");
-							Log.d(TAG, cantidad_platos.toString()); 
-							if (objDETALLE.getJSONObject(k).getString("pedido")!=null) {
-								Log.d(TAG, objDETALLE.getJSONObject(k).getString("pedido")); 
-								JSONObject objpedido = new JSONObject(objDETALLE.getJSONObject(k).getString("pedido")); 
+						final JSONArray obj_detalle1 = objetosDetalle.getJSONArray("detalles"); 
+						for (int k = 0; k < obj_detalle1.length(); k++) {
+							String cantidad_platos = obj_detalle1.getJSONObject(k).getString("cant");
+							Log.d(TAG, cantidad_platos.toString()); 	
+						
+								Log.d(TAG, obj_detalle1.getJSONObject(k).getString("pedido")); 
+								JSONObject objpedido = new JSONObject(obj_detalle1.getJSONObject(k).getString("pedido")); 
 								fecha_ped = objpedido.getString("fechapedido"); 
-								idpedido =objpedido.getString("idPedido"); 
-							}
-							if (objDETALLE.getJSONObject(k).getString("plato")!= null) {
-								Log.d(TAG, objDETALLE.getJSONObject(k).getString("plato")); 
-								JSONObject objPlato = new JSONObject(objDETALLE.getJSONObject(k).getString("plato")); 
+								idpedido =objpedido.getString("idpedido"); 
+							
+								Log.d(TAG, obj_detalle1.getJSONObject(k).getString("plato")); 
+								JSONObject objPlato = new JSONObject(obj_detalle1.getJSONObject(k).getString("plato")); 
 								plato_ped = objPlato.getString("nomplato");
 								idplato_ped = objPlato.getString("idplato"); 
-							}	
-							datopedido.add(plato_ped + " , "); 
+							
+							datopedido.add(plato_ped); 
 						}
 						String pedidocompleto = datopedido.toString(); 
 						data.add(new PostData(fecha_ped, pedidocompleto , false));
+						datopedido.clear();
 					}} catch (JSONException e) {
 						e.printStackTrace();
 					}
-
-
+				hidepDialog(); 
+				llenarmenu(savedInstanceState); 
 			}
+			
 
 		}, new Response.ErrorListener() {
 			@Override
@@ -137,15 +141,7 @@ public class Act_Principal extends ListActivity {
 			}
 		});
 		AppController.getInstance().addToRequestQueue(pedidosReq);
-		if (savedInstanceState == null){
-			adapter = new PostAdapter(Act_Principal.this, data);
-			hidepDialog();
-		} else{
-			data = savedInstanceState.getParcelableArrayList("savedData");
-			adapter = new PostAdapter(Act_Principal.this, data);
-			hidepDialog();
-		}
-		setListAdapter(adapter);
+		
 
 
 	}
@@ -202,6 +198,17 @@ public class Act_Principal extends ListActivity {
 		}
 		return dialog;
 	}
+	public void llenarmenu(Bundle savedInstanceState){
+		if (savedInstanceState == null){
+			adapter = new PostAdapter(Act_Principal.this, data);
+			
+		} else{
+			data = savedInstanceState.getParcelableArrayList("savedData");
+			adapter = new PostAdapter(Act_Principal.this, data);
+			hidepDialog();
+		}
+		setListAdapter(adapter);
+	}
 
 	public Dialog createConfirmDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -251,6 +258,11 @@ public class Act_Principal extends ListActivity {
 			}); 
 		}
 	}
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		hidepDialog();
+	}
 	private void showpDialog() {
 		if (!pDialog.isShowing())
 			pDialog.show();
@@ -260,4 +272,7 @@ public class Act_Principal extends ListActivity {
 		if (pDialog.isShowing())
 			pDialog.dismiss();
 	}
+	
+	
+	
 }
