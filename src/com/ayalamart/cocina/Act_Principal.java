@@ -28,6 +28,7 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,6 +55,7 @@ public class Act_Principal extends ListActivity {
 	String url_borrarpedido = "http://10.10.0.99:8080/Restaurante/rest/pedido/updateEstatusPedido/"; 
 	@Override
 	public void onCreate( final Bundle savedInstanceState) {
+	
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_post_list);
 		pDialog = new ProgressDialog(this); 
@@ -81,75 +83,20 @@ public class Act_Principal extends ListActivity {
 		SimpleDateFormat fechaact = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
 		String fecha = fechaact.format(rightnow.getTime());
 		data = new ArrayList<PostData>();
+		
+		llenarLV(savedInstanceState); 
+		final Handler h = new Handler();
+		final int delay = 20000; //milliseconds
 
+		h.postDelayed(new Runnable(){
+		    public void run(){
+		        //do something
+		    	llenarLV(savedInstanceState); 
+		        h.postDelayed(this, delay);
+		    }
+		}, delay);
 
-		JsonArrayRequest pedidosReq = new JsonArrayRequest(url_pedidos, new Response.Listener<JSONArray>(){
-			//	JsonObjectRequest pedidosReq = new JsonObjectRequest(Method.GET, 
-			//		url_pedidos, null, new Response.Listener<JSONObject>() {
-			private ArrayList<String> datopedido = new ArrayList<String>();
-			private Object statuspedido;
-
-
-			@Override
-			public void onResponse(JSONArray response) {
-
-				// TODO Auto-generated method stub
-				Log.d(TAG, response.toString()); 
-				String interm = response.toString(); 
-				try {
-					// JSONObject obj_interm = new JSONObject(interm); 
-					Log.d(TAG + "chequeo", interm); 
-					//PC
-
-					for (int i = 0; i < response.length(); i++) { 
-
-						final JSONObject objetosDetalle = (JSONObject)response.get(i); 
-
-						//objDetalle
-						final JSONArray obj_detalle1 = objetosDetalle.getJSONArray("detalles"); 
-						for (int k = 0; k < obj_detalle1.length(); k++) {
-							String cantidad_platos = obj_detalle1.getJSONObject(k).getString("cant");
-
-							Log.d(TAG, cantidad_platos.toString()); 	
-
-							Log.d(TAG, obj_detalle1.getJSONObject(k).getString("pedido")); 
-							JSONObject objpedido = new JSONObject(obj_detalle1.getJSONObject(k).getString("pedido")); 
-							fecha_ped = objpedido.getString("fechapedido"); 
-							idpedido =objpedido.getString("idpedido"); 
-							statuspedido = objpedido.get("estatus"); 
-
-
-							Log.d(TAG, obj_detalle1.getJSONObject(k).getString("plato")); 
-							JSONObject objPlato = new JSONObject(obj_detalle1.getJSONObject(k).getString("plato")); 
-							plato_ped = objPlato.getString("nomplato");
-							idplato_ped = objPlato.getString("idplato"); 
-							if (statuspedido.toString().equals("1")) {
-								datopedido.add(plato_ped + "(" + cantidad_platos + ")"); 
-							}
-
-						}
-						if (!datopedido.isEmpty()) {
-							String pedidocompleto = datopedido.toString(); 
-							data.add(new PostData(fecha_ped, pedidocompleto, idpedido , false));
-							datopedido.clear();
-						}
-						
-					}} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				hidepDialog(); 
-				llenarmenu(savedInstanceState); 
-			}
-
-
-		}, new Response.ErrorListener() {
-			@Override
-			public void onErrorResponse(VolleyError error){
-				VolleyLog.d(TAG, "Error:" + error.getMessage());
-				hidepDialog(); 
-			}
-		});
-		AppController.getInstance().addToRequestQueue(pedidosReq);
+		
 	}
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -214,6 +161,82 @@ public class Act_Principal extends ListActivity {
 			hidepDialog();
 		}
 		setListAdapter(adapter);
+	}
+	public void llenarLV(final Bundle savedInstanceState){
+		JsonArrayRequest pedidosReq = new JsonArrayRequest(url_pedidos, new Response.Listener<JSONArray>(){
+			//	JsonObjectRequest pedidosReq = new JsonObjectRequest(Method.GET, 
+			//		url_pedidos, null, new Response.Listener<JSONObject>() {
+			private ArrayList<String> datopedido = new ArrayList<String>();
+			private Object statuspedido;
+			int k_cant_ped = 0;
+
+			@Override
+			public void onResponse(JSONArray response) {
+
+				// TODO Auto-generated method stub
+				Log.d(TAG, response.toString()); 
+				String interm = response.toString(); 
+				try {
+					// JSONObject obj_interm = new JSONObject(interm); 
+					Log.d(TAG + "chequeo", interm); 
+					//PC
+
+					for (int i = 0; i < response.length(); i++) { 
+
+						final JSONObject objetosDetalle = (JSONObject)response.get(i); 
+
+						//objDetalle
+						final JSONArray obj_detalle1 = objetosDetalle.getJSONArray("detalles"); 
+						for (int k = 0; k < obj_detalle1.length(); k++) {
+							String cantidad_platos = obj_detalle1.getJSONObject(k).getString("cant");
+
+							Log.d(TAG, cantidad_platos.toString()); 	
+
+							Log.d(TAG, obj_detalle1.getJSONObject(k).getString("pedido")); 
+							JSONObject objpedido = new JSONObject(obj_detalle1.getJSONObject(k).getString("pedido")); 
+							fecha_ped = objpedido.getString("fechapedido"); 
+							idpedido =objpedido.getString("idpedido"); 
+							statuspedido = objpedido.get("estatus"); 
+
+
+							Log.d(TAG, obj_detalle1.getJSONObject(k).getString("plato")); 
+							JSONObject objPlato = new JSONObject(obj_detalle1.getJSONObject(k).getString("plato")); 
+							plato_ped = objPlato.getString("nomplato");
+							idplato_ped = objPlato.getString("idplato"); 
+							if (statuspedido.toString().equals("1")) {
+								datopedido.add(plato_ped + "(" + cantidad_platos + ")"); 
+							}
+
+						}
+						if (!datopedido.isEmpty()) {
+							for (int j = 0; j < data.size(); j++) {
+							if (!data.get(j).getidPedido().equals(idpedido)) {
+							k_cant_ped++; 
+							}}
+							if (k_cant_ped == data.size()) {
+								String pedidocompleto = datopedido.toString(); 
+								data.add(new PostData(fecha_ped, pedidocompleto, idpedido , false));
+								datopedido.clear();
+							}
+						}
+	
+					}} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				hidepDialog(); 
+				llenarmenu(savedInstanceState); 
+			}
+
+
+		}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error){
+				VolleyLog.d(TAG, "Error:" + error.getMessage());
+				hidepDialog(); 
+			}
+		});
+		AppController.getInstance().addToRequestQueue(pedidosReq);
+		
 	}
 
 	/*public Dialog createConfirmDialog() {
