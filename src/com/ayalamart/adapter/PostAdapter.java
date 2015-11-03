@@ -117,6 +117,7 @@ public class PostAdapter extends BaseAdapter
 		holder.cb.setTag(d);
 		// Setting all values in listview
 		holder.tvFecha_pub.setText(data.get(position).getFecha());
+		
 		holder.tvtitulo_post.setText(data.get(position).getEquipos());
 		holder.cb.setChecked(data.get(position).getChecked());
 
@@ -173,4 +174,5 @@ public class PostAdapter extends BaseAdapter
 			d.setChecked(!d.getChecked());
 		}
 	};
+	
 }
