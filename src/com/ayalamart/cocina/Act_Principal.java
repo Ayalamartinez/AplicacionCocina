@@ -277,11 +277,15 @@ public class Act_Principal extends ListActivity {
 				JSONObject pedidolisto = new JSONObject(); 
 				String messagestr = "Su orden esta lista"; 
 				
-				//AQUI SE PONE EL CODIGO DE APP42 PARA ENVIARLE AL USUARIO LA BROMA 
+				
 				try {
 					if (datocliente.has("correo") && datocliente.has("cedula")) {
+						
 						String correocliente = (String) datocliente.get("correo");
-						String cedulacliente = (String) datocliente.get("cedula");
+						String cedulacliente_s = (String) datocliente.get("cedula");
+						String cedulacliente = cedulacliente_s.substring(3); 
+						
+						Log.d(TAG, "pruebadedata"+ correocliente); 
 						String user = correocliente + "_" + cedulacliente; 
 						App42API.buildPushNotificationService().sendPushMessageToUser(user,
 		                        messagestr, new App42CallBack() {
