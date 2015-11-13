@@ -24,7 +24,7 @@ public class PostAdapter extends BaseAdapter
 		TextView tvFecha_pub;
 		TextView tvtitulo_post;
 		CheckBox cb;
-	}
+	} 
 
 	private static final String TAG = "CustomAdapter";
 	private static int convertViewCounter = 0;

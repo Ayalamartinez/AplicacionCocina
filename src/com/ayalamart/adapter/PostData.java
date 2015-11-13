@@ -15,7 +15,7 @@ public class PostData implements Parcelable {
 		this.titulo = equip;
 		this.leido = checked;
 		this.idpedido = idPedido; 
-
+ 
 	}
 	
 	public PostData(Parcel in){
